@@ -61,8 +61,3 @@ Startup Idea: "AI-driven recruitment platform"
 AI-Powered Startup Name: "HireAI", "TalentMatch"
 Lean Business Model: A brief description of the business model for the startup.
 Elevator Pitch: A concise pitch summarizing the business idea in under 100 words.
-Contributing
-Feel free to open issues or create pull requests if you find any bugs or want to contribute improvements to the project.
-
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
