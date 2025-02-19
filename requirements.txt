@@ -4,8 +4,6 @@ streamlit
 google-generativeai
 python-dotenv
 litellm
-dotenv
-warnings
 markdown-it-py 
 mdurl 
 pygments 
