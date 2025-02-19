@@ -1,40 +1,24 @@
-import sys
 import warnings
 import streamlit as st
-import json
 from datetime import datetime
 from multiagent_startup_builder.crew import MultiagentStartupBuilder
-from multiagent_startup_builder.memory import MemoryManager
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
-# Initialize memory
-memory = MemoryManager()
-JSON_FILE = "conversation.json"  # File to save conversation history
-
-def load_conversation():
-    """Load previous conversation history from JSON file."""
-    try:
-        with open(JSON_FILE, "r") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
-
-def save_conversation(conversation):
-    """Save conversation history to a JSON file."""
-    with open(JSON_FILE, "w") as f:
-        json.dump(conversation, f, indent=4)
+# Define Crew and Agent Names
+CREW_NAMES = {
+    "Tech Crew": "💡 Tech Innovator",
+    "Marketing Crew": "📈 Market Analyst",
+    "Design Crew": "🎨 UI/UX Designer",
+    "Product Crew": "🚀 Product Manager"
+}
 
 def run():
     """Run the multi-agent startup discussion."""
     st.title("🚀 Multi-Agent Startup Builder")
     st.write("Describe your startup idea and let AI agents collaborate!")
 
-    # Load conversation history
-    if "conversation" not in st.session_state:
-        st.session_state["conversation"] = load_conversation()
-
-    # Take user input
+    # User Input
     user_input = st.text_area("Enter your startup idea:", "AI-driven recruitment platform")
 
     if st.button("Start Discussion"):
@@ -45,40 +29,45 @@ def run():
         print(f"🔍 Inputs: {inputs}")
 
         try:
-            crew_instance = MultiagentStartupBuilder().crew()
-            print(f"🔍 Crew Instance: {crew_instance}")
+            # Create MultiagentStartupBuilder instance
+            startup_builder = MultiagentStartupBuilder()
+            crews = startup_builder.run_all_crews()
 
-            response = crew_instance.kickoff(inputs=inputs)
-            print(f"🔍 Debug - Response Type: {type(response)} | Response: {response}")
+            st.subheader("🗣️ Multi-Agent Discussion")
+            col1, col2 = st.columns(2)
 
-            # Convert response to JSON-serializable format
-            if isinstance(response, list):
-                response = response[0] if response else "No valid response"
-            response_str = str(response)
+            i = 0  # Track column placement
 
-            # Update memory and session state
-            memory.update_memory("user", response_str)
-            st.session_state["conversation"].append({"iteration": len(st.session_state["conversation"]) + 1, "response": response_str})
+            for crew_name, crew in crews.items():
+                print(f"\n🚀 **Executing {crew_name}**")
+                output = crew.kickoff()
+                print(type(output))  # Debugging: Show output type
+                print(f"\n📝 **{crew_name} Output:**")
+                print(output)
 
-            # Save conversation history
-            save_conversation(st.session_state["conversation"])
+                # Convert CrewOutput to text if needed
+                response_text = output.text if hasattr(output, "text") else str(output)
+                agent_name = CREW_NAMES.get(crew_name, crew_name)
+
+                # Display response in styled box
+                response_box = f"""
+                    <div style="border: 2px solid #ddd; border-radius: 10px; padding: 10px; margin: 10px 0; 
+                                background-color: {'#f9f9f9' if i % 2 == 0 else '#eaf4fc'};">
+                        <h4>{agent_name}</h4>
+                        <p>{response_text}</p>
+                    </div>
+                """
+                if i % 2 == 0:
+                    with col1:
+                        st.markdown(response_box, unsafe_allow_html=True)
+                else:
+                    with col2:
+                        st.markdown(response_box, unsafe_allow_html=True)
+                
+                i += 1  # Alternate columns for display
 
         except Exception as e:
             st.error(f"An error occurred: {e}")
-
-    # Display conversation history
-    st.subheader("Conversation History")
-    for entry in st.session_state["conversation"]:
-        st.write(f"**Iteration {entry['iteration']}:**")
-        st.text(entry["response"])
-
-    # Feedback Loop
-    feedback = st.text_area("Provide feedback for agents:", "")
-    if st.button("Submit Feedback"):
-        memory.update_memory("user", f"User Feedback: {feedback}")
-        st.session_state["conversation"].append({"iteration": len(st.session_state["conversation"]) + 1, "response": f"User Feedback: {feedback}"})
-        save_conversation(st.session_state["conversation"])  # Save feedback
-        st.success("Feedback recorded! Agents will improve in the next iteration.")
 
 if __name__ == "__main__":
     run()

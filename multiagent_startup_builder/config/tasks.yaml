@@ -1,27 +1,27 @@
 Tech Stack Analysis:
   name: "Tech Stack Analysis"
-  description: "Analyze and recommend the best technology stack for the startup."
+  description: "Analyze and recommend the best technology stack for the startup in 150 words strictly."
   agent: "technologist"
   dependencies: ["Business Roadmap"]
-  expected_output: "A report outlining the recommended technology stack and architecture."
+  expected_output: "A report outlining the recommended technology stack and architecture in 150 words strictly."
 
 Market Research:
   name: "Market Research"
-  description: "Research the market, target audience, and competitors."
+  description: "Research the market, target audience, and competitors.in 150 words strictly"
   agent: "marketer"
   dependencies: []
-  expected_output: "A market research document with insights on potential customers and competition."
+  expected_output: "A market research document with insights on potential customers and competition.in 150 words strictly"
 
 UI/UX Planning:
   name: "UI/UX Planning"
-  description: "Plan the user interface and user experience based on market needs."
+  description: "Plan the user interface and user experience based on market needs.in 150 words strictly"
   agent: "designer"
   dependencies: ["Tech Stack Analysis"]
-  expected_output: "Wireframes, design principles, and user experience guidelines."
+  expected_output: "Wireframes, design principles, and user experience guidelines.in 150 words strictly"
 
 Business Roadmap:
   name: "Business Roadmap"
-  description: "Create a structured roadmap for product development and launch."
+  description: "Create a structured roadmap for product development and launch.in 150 words strictly"
   agent: "product_manager"
   dependencies: ["Market Research"]
-  expected_output: "A timeline and execution plan for product development and go-to-market strategy."
+  expected_output: "A timeline and execution plan for product development and go-to-market strategy.in 150 words strictly"

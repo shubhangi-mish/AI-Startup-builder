@@ -2,7 +2,7 @@ import json
 import os
 
 class MemoryManager:
-    """Handles iterative short-term memory updates for agents."""
+    """Handles iterative short-term memory updates for multiple agents."""
 
     def __init__(self, short_term_rounds=5, memory_file="memory.json"):
         self.memory_file = memory_file
@@ -21,13 +21,15 @@ class MemoryManager:
         return self.initialize_memory()
 
     def initialize_memory(self):
-        """Initialize default memory structure."""
+        """Initialize default memory structure for all crews."""
         return {
             "user": [],
-            "technologist": [],
-            "marketer": [],
-            "designer": [],
-            "product_manager": []
+            "crews": {
+                "technologist": [],
+                "marketer": [],
+                "designer": [],
+                "product_manager": []
+            }
         }
 
     def save_memory(self):
@@ -40,22 +42,26 @@ class MemoryManager:
 
     def load(self, agent_name):
         """Retrieve memory for an agent (last N interactions)."""
-        return self.memory.get(agent_name, [])[-self.short_term_rounds:]
+        if agent_name == "user":
+            return self.memory["user"][-self.short_term_rounds:]
+        return self.memory["crews"].get(agent_name, [])[-self.short_term_rounds:]
 
     def update_memory(self, agent_name, new_data):
         """Append new data to agent memory and retain only the last N rounds."""
-        if agent_name not in self.memory:
-            self.memory[agent_name] = []
-        self.memory[agent_name].append(new_data)
-        self.memory[agent_name] = self.memory[agent_name][-self.short_term_rounds:]  # Retain last N rounds
-        
+        if agent_name == "user":
+            self.memory["user"].append(new_data)
+            self.memory["user"] = self.memory["user"][-self.short_term_rounds:]
+        else:
+            if agent_name not in self.memory["crews"]:
+                self.memory["crews"][agent_name] = []
+            self.memory["crews"][agent_name].append(new_data)
+            self.memory["crews"][agent_name] = self.memory["crews"][agent_name][-self.short_term_rounds:]
+
         self.save_memory()
-        print(f"✅ Memory updated for {agent_name}: {self.memory[agent_name]}")  # Debugging info
+        print(f"✅ Memory updated for {agent_name}: {self.load(agent_name)}")  # Debugging info
 
     def integrate_feedback(self, user_feedback):
-        """Store user feedback globally for all agents to use."""
+        """Store user feedback globally and propagate to all crews."""
         self.update_memory("user", user_feedback)
-
-        # Propagate feedback to all agents
-        for agent in ["technologist", "marketer", "designer", "product_manager"]:
+        for agent in self.memory["crews"]:
             self.update_memory(agent, f"User Feedback: {user_feedback}")

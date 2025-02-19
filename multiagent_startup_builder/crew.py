@@ -130,25 +130,67 @@ class MultiagentStartupBuilder():
         )
 
     @crew
-    def crew(self) -> Crew:
-        agents = [self.technologist(), self.marketer(), self.designer(), self.product_manager()]
-        tasks = [self.tech_stack_analysis(), self.market_research(), self.ui_ux_planning(), self.business_roadmap()]
-        
+    def tech_crew(self) -> Crew:
         return Crew(
-            agents=agents,
-            tasks=tasks,
+            agents=[self.technologist()],
+            tasks=[self.tech_stack_analysis()],
             process=Process.sequential,
             verbose=True
         )
 
-    def refine_startup(self):
-        """Refines the startup idea over 5 iterative rounds with memory updates."""
-        for round_num in range(1, 6):
-            print(f"\n🚀 **Round {round_num} - Refining Startup Plan**")
-            self.crew().kickoff()
-            user_feedback = input("\n💡 Enter your feedback for improvements: ")
-            self.memory.integrate_feedback(user_feedback)
-            for agent in ["technologist", "marketer", "designer", "product_manager"]:
-                self.memory.update_memory(agent, user_feedback)
+    @crew
+    def marketing_crew(self) -> Crew:
+        return Crew(
+            agents=[self.marketer()],
+            tasks=[self.market_research()],
+            process=Process.sequential,
+            verbose=True
+        )
 
-        print("\n✅ **Startup Plan Finalized After 5 Rounds!**")
+    @crew
+    def design_crew(self) -> Crew:
+        return Crew(
+            agents=[self.designer()],
+            tasks=[self.ui_ux_planning()],
+            process=Process.sequential,
+            verbose=True
+        )
+
+    @crew
+    def product_crew(self) -> Crew:
+        return Crew(
+            agents=[self.product_manager()],
+            tasks=[self.business_roadmap()],
+            process=Process.sequential,
+            verbose=True
+        )
+
+    def run_all_crews(self):
+        """Runs all crews independently and collects feedback separately."""
+        crews = {
+            "Tech Crew": self.tech_crew(),
+            "Marketing Crew": self.marketing_crew(),
+            "Design Crew": self.design_crew(),
+            "Product Crew": self.product_crew()
+        }
+        return crews
+'''
+        for crew_name, crew in crews.items():
+            print(f"\n🚀 **Executing {crew_name}**")
+            output = crew.kickoff()
+            print(type(output))
+
+            print(f"\n📝 **{crew_name} Output:**")
+            print(output)
+
+            # Store output in respective memory
+            self.memory.update_memory(crew_name, output)
+
+            # Collect feedback for each crew separately
+            user_feedback = input(f"\n💡 Enter feedback for {crew_name}: ")
+            self.memory.integrate_feedback(user_feedback)
+            self.memory.update_memory(crew_name, user_feedback)
+
+        print("\n✅ **All Crews Executed and Feedback Integrated!**")    
+
+'''
