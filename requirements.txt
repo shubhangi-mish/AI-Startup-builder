@@ -3,3 +3,7 @@ crewai-tools
 streamlit
 google-generativeai
 python-dotenv
+litellm
+yaml
+dotenv
+warnings
