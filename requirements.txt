@@ -4,7 +4,6 @@ streamlit
 google-generativeai
 python-dotenv
 litellm
-yaml
 dotenv
 warnings
 markdown-it-py 
