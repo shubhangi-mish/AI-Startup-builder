@@ -7,3 +7,7 @@ litellm
 yaml
 dotenv
 warnings
+markdown-it-py 
+mdurl 
+pygments 
+rich
