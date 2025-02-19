@@ -11,6 +11,9 @@ dependencies = [
 [project.scripts]
 multiagent_startup_builder = "multiagent_startup_builder.main:run"
 run_crew = "multiagent_startup_builder.main:run"
+train = "multiagent_startup_builder.main:train"
+replay = "multiagent_startup_builder.main:replay"
+test = "multiagent_startup_builder.main:test"
 
 [build-system]
 requires = ["hatchling"]
